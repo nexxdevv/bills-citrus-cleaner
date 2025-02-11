@@ -1,5 +1,8 @@
 import type { Metadata } from "next"
 import "./globals.css"
+import Header from "@/components/Header"
+import CartProviderWrapper from "@/components/CartProviderWrapper"
+import AuthProviderWrapper from "@/components/AuthProviderWrapper"
 
 export const metadata: Metadata = {
   title: "Bill's Citrus Cleaner",
@@ -13,7 +16,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased`}>{children}</body>
+      <body className={`antialiased`}>
+        <AuthProviderWrapper>
+          <CartProviderWrapper>
+            <Header />
+            {children}
+          </CartProviderWrapper>
+        </AuthProviderWrapper>
+      </body>
     </html>
   )
 }
