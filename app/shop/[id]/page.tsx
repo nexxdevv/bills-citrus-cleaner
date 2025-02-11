@@ -46,9 +46,9 @@ const ProductDetail = () => {
           />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">{product.name}</h1>
-          <p className="text-gray-500 text-sm mt-2">{product.weight}</p>
-          <p className="text-gray-700 text-lg font-medium mt-4">${(product.price * quantity).toFixed(2)}</p>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">{product.name}</h1>
+          <p className="text-gray-500 text-sm mt-2 dark:text-gray-400">{product.weight}</p>
+          <p className="text-gray-700 text-lg font-medium mt-4 dark:text-white">${(product.price * quantity).toFixed(2)}</p>
 
           <div className="mt-4 flex items-center space-x-4">
             <button
@@ -57,7 +57,7 @@ const ProductDetail = () => {
             >
               -
             </button>
-            <span className="text-lg font-medium">{quantity}</span>
+            <span className="text-lg font-medium dark:text-white">{quantity}</span>
             <button
               onClick={() => setQuantity((prev) => prev + 1)}
               className="px-4 py-2 bg-gray-200 rounded-lg"
@@ -66,7 +66,7 @@ const ProductDetail = () => {
             </button>
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 dark:text-white">
             <p>{product.description}</p>
           </div>
 

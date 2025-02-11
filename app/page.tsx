@@ -1,10 +1,10 @@
-import ProductGrid from "@/components/ProductGrid"
+import ProductGridServer from "@/components/ProductGridServer"
 
 export default function Home() {
   return (
     <>
       <main>
-        <ProductGrid />
+        <ProductGridServer />
       </main>
     </>
   )

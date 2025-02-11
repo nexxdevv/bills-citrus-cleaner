@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased`}>
+      <body className={`antialiased dark:bg-[#2B2A32]`}>
         <AuthProviderWrapper>
           <CartProviderWrapper>
             <Header />

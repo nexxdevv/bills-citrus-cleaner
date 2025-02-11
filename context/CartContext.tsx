@@ -9,6 +9,7 @@ interface CartItem {
   price: number
   photo: string
   quantity: number
+  description: string
 }
 
 interface CartContextProps {
