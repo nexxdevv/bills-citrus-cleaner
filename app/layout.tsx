@@ -3,6 +3,7 @@ import "./globals.css"
 import Header from "@/components/Header"
 import CartProviderWrapper from "@/components/CartProviderWrapper"
 import AuthProviderWrapper from "@/components/AuthProviderWrapper"
+import Footer from "@/components/Footer"
 
 export const metadata: Metadata = {
   title: "Bill's Citrus Cleaner",
@@ -16,11 +17,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased dark:bg-[#2B2A32]`}>
+      <body className={`antialiased dark:bg-[#2B2A32] flex flex-col min-h-screen`}>
         <AuthProviderWrapper>
           <CartProviderWrapper>
             <Header />
             {children}
+            <Footer />
           </CartProviderWrapper>
         </AuthProviderWrapper>
       </body>

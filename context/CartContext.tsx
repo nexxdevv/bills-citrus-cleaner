@@ -1,92 +1,97 @@
-import React, { createContext, useContext, useEffect, useState } from "react"
-import { db, doc, setDoc, getDoc } from "@/lib/firebaseConfig"
-import { useAuth } from "@/context/AuthContext"
-import Cookies from "js-cookie"
+"use client"
+
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { db, doc, setDoc, getDoc } from "@/lib/firebaseConfig";
+import { useAuth } from "@/context/AuthContext";
 
 interface CartItem {
-  id: string
-  name: string
-  price: number
-  photo: string
-  quantity: number
-  description: string
+  id: string;
+  name: string;
+  price: number;
+  photo: string;
+  quantity: number;
+  description: string;
 }
 
 interface CartContextProps {
-  cartItems: CartItem[]
-  addToCart: (item: CartItem) => void
-  removeFromCart: (id: string) => void
-  updateQuantity: (id: string, quantity: number) => void
-  clearCart: () => void
+  cartItems: CartItem[];
+  addToCart: (item: CartItem) => void;
+  removeFromCart: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
+  clearCart: () => void;
 }
 
-const CartContext = createContext<CartContextProps | undefined>(undefined)
+const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
-  children
+  children,
 }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
-  const { user } = useAuth()
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const { user } = useAuth();
 
+  // Load cart from localStorage or Firestore
   useEffect(() => {
-    const savedCart = Cookies.get("cart")
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart))
-    }
-  }, [])
-
-  useEffect(() => {
-    Cookies.set("cart", JSON.stringify(cartItems), { expires: 7 })
-  }, [cartItems])
-
-  useEffect(() => {
-    if (user) {
-      const fetchCart = async () => {
-        const cartRef = doc(db, "carts", user.uid)
-        const cartSnap = await getDoc(cartRef)
+    const loadCart = async () => {
+      if (user) {
+        const cartRef = doc(db, "carts", user.uid);
+        const cartSnap = await getDoc(cartRef);
         if (cartSnap.exists()) {
-          setCartItems(cartSnap.data().items || [])
+          setCartItems(cartSnap.data().items || []);
+        } else {
+          await setDoc(cartRef, { items: [] });
+        }
+      } else {
+        const savedCart = localStorage.getItem("cart");
+        if (savedCart) {
+          setCartItems(JSON.parse(savedCart));
         }
       }
-      fetchCart()
-    }
-  }, [user])
+    };
 
+    loadCart();
+  }, [user]);
+
+  // Save cart changes to Firestore or localStorage
   useEffect(() => {
-    if (user) {
-      const saveCartToFirestore = async () => {
-        const cartRef = doc(db, "carts", user.uid)
-        await setDoc(cartRef, { items: cartItems }, { merge: true })
+    const saveCart = async () => {
+      if (user) {
+        const cartRef = doc(db, "carts", user.uid);
+        await setDoc(cartRef, { items: cartItems }, { merge: true });
+      } else {
+        localStorage.setItem("cart", JSON.stringify(cartItems));
       }
-      saveCartToFirestore()
+    };
+
+    if (cartItems.length > 0) {
+      saveCart();
     }
-  }, [cartItems, user])
+  }, [cartItems, user]);
 
   const addToCart = (item: CartItem) => {
     setCartItems((prev) => {
-      const existingItem = prev.find((i) => i.id === item.id)
+      const existingItem = prev.find((i) => i.id === item.id);
       if (existingItem) {
         return prev.map((i) =>
           i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
-        )
+        );
       }
-      return [...prev, item]
-    })
-  }
+      return [...prev, item];
+    });
+  };
 
   const removeFromCart = (id: string) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id))
-  }
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
 
   const updateQuantity = (id: string, quantity: number) => {
     setCartItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, quantity } : item))
-    )
-  }
+    );
+  };
 
   const clearCart = () => {
-    setCartItems([])
-  }
+    setCartItems([]);
+  };
 
   return (
     <CartContext.Provider
@@ -95,18 +100,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         addToCart,
         removeFromCart,
         updateQuantity,
-        clearCart
+        clearCart,
       }}
     >
       {children}
     </CartContext.Provider>
-  )
-}
+  );
+};
 
 export const useCart = () => {
-  const context = useContext(CartContext)
+  const context = useContext(CartContext);
   if (!context) {
-    throw new Error("useCart must be used within a CartProvider")
+    throw new Error("useCart must be used within a CartProvider");
   }
-  return context
-}
+  return context;
+};
+
+export default CartContext;

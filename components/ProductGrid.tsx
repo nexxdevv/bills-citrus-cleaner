@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useCart } from "@/context/CartContext"
@@ -23,15 +23,15 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
   const { addToCart } = useCart()
 
   return (
-    <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6">
       {products.map((product) => (
         <li
           key={product.id}
-          className="rounded-2xl shadow-lg p-4 transition-transform hover:scale-105 hover:shadow-xl dark:bg-[#1F1E25]"
+          className="rounded-2xl shadow-lg p-4 bg-[#F0F0F4]  dark:bg-[#1F1E25] relative w-full"
         >
           <Link
             href={`/shop/${product.id}`}
-            className="relative w-full overflow-hidden "
+            className="relative w-full overflow-hidden"
           >
             <Image
               src={product.photo}
@@ -39,10 +39,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
               width={340}
               height={340}
               priority
-              className="w-full rounded-lg bg-white"
+              className="w-[100%] h-[340px] aspect-square object-contain"
             />
           </Link>
-          <div className="mt-4 text-center">
+          <div className="mt-2 text-center">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               {product.name}
             </h2>
@@ -52,19 +52,22 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
             <p className="text-gray-700 font-medium text-lg mt-2 dark:text-white">
               ${product.price}
             </p>
+
+            <div className="w-full p-2 mt-2">
+              <button
+                onClick={() => addToCart({ ...product, quantity: 1 })}
+                className="w-full bg-orange-600 text-white py-2 rounded-full text-sm font-semibold transition hover:bg-orange-600/80 mb-2"
+              >
+                Add to Cart
+              </button>
+              <button
+                onClick={() => addToCart({ ...product, quantity: 1 })}
+                className="w-full bg-black text-white py-2 rounded-full text-sm font-semibold transition hover:bg-black/80"
+              >
+                Buy Now
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => addToCart(product)}
-            className="mt-4 w-full bg-orange-600 text-white py-2 rounded-full text-sm font-semibold transition hover:bg-orange-400"
-          >
-            Add to Cart
-          </button>
-          <button
-            onClick={() => addToCart(product)}
-            className="mt-4 w-full bg-black text-white py-2 rounded-full text-sm font-semibold transition hover:bg-orange-400"
-          >
-            Buy Now
-          </button>
         </li>
       ))}
     </ul>
